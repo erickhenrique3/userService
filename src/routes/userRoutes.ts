@@ -13,8 +13,8 @@ router.post("/user/register", validate(registerSchema), async (ctx) => {
   const { name, phone, email, password } = (ctx.request as any).validatedBody;
 
   try {
-    const existing = await userService.findByEmail(email);
-    if (existing) return error(ctx, "Email already registered", 400);
+    const existing = await userService.findByEmail(email) || await userService.findByPhone(phone);
+    if (existing) return error(ctx, "Email or phone already registered", 400);
 
     const user = await userService.createUser(name, phone, email, password);
     return success(ctx, user, "User created successfully", 201);
